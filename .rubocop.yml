@@ -1,0 +1,13 @@
+inherit_gem:
+  rubocop-rootstrap:
+    - config/rails.yml
+
+inherit_mode:
+  merge:
+    - Exclude
+
+AllCops:
+  Exclude:
+    - db/schema.rb
+    - bin/bundle
+  NewCops: enable
