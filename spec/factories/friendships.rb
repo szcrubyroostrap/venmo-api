@@ -10,7 +10,7 @@
 #
 FactoryBot.define do
   factory :friendship do
-    user_a_id { 1 }
-    user_b_id { 1 }
+    user_a_id
+    user_b_id
   end
 end

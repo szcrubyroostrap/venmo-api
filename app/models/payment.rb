@@ -13,4 +13,9 @@
 class Payment < ApplicationRecord
   belongs_to :sender, class_name: 'User', inverse_of: :payments
   belongs_to :receiver, class_name: 'User', inverse_of: :incoming_payments
+
+  validates :amount, presence: true
+  validates :amount, numericality: { greater_than: 0, less_than: 1000 }
+
+  scope :desc, -> { order(created_at: :desc) }
 end

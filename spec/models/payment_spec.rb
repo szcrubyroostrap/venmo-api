@@ -21,4 +21,9 @@ describe Payment, type: :model do
       expect(p.macro).to eq(:belongs_to)
     end
   end
+
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:amount) }
+    it { is_expected.to validate_numericality_of(:amount).is_greater_than(0).is_less_than(1_000) }
+  end
 end

@@ -36,5 +36,9 @@ describe User, type: :model do
       expect(user_a.friends.ids).to include(user_b.id)
       expect(user_b.friends.ids).to include(user_a.id)
     end
+
+    it 'raise when creates friendship between the same user' do
+      expect { user_a.add_friend(user_a) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
 end
