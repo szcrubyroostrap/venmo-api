@@ -29,11 +29,22 @@ describe Friendship, type: :model do
         expect { user_a.add_friend(user_a) }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
-
     context 'when is trying to add an existing friend' do
       it 'raises error' do
         user_a.add_friend(user_b)
         expect { user_a.add_friend(user_b) }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+  end
+
+  describe 'callbacks' do
+    subject(:user_a) { create :user }
+    subject(:user_b) { create :user }
+
+    context 'when a Friendship is destroyed, have to do it in the other way' do
+      it 'it detroys two Friendships' do
+        user_a.add_friend(user_b)
+        expect { Friendship.first.destroy }.to change { Friendship.count }.by(-2)
       end
     end
   end

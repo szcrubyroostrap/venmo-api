@@ -12,9 +12,9 @@
 #
 FactoryBot.define do
   factory :payment do
-    amount { 0.0 }
-    description { 'MyString' }
-    sender_id { 1 }
-    receiver_id { 1 }
+    amount { Faker::Number.within(range: 1..1_000).to_f }
+    description { Faker::Lorem.sentence }
+    sender factory: :user
+    receiver factory: :user
   end
 end

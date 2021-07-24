@@ -14,6 +14,8 @@ class Friendship < ApplicationRecord
 
   validate :friendship_with_same_user, :friendship_existing_friend
 
+  after_destroy :bi_directional_destroy
+
   private
 
   def friendship_with_same_user
@@ -28,5 +30,11 @@ class Friendship < ApplicationRecord
 
     errors.add(:base, 'Friendship already exists.')
     throw(:abort)
+  end
+
+  # Destroy if user is removed
+  def bi_directional_destroy
+    to_destroy = Friendship.find_by(user_a: user_b, user_b: user_a)
+    to_destroy&.destroy!
   end
 end
