@@ -19,13 +19,35 @@ class User < ApplicationRecord
     user.friendships.create!(user_b: self)
   end
 
+  def my_friend?(friend)
+    friends.find_by(id: friend.id).present?
+  end
+
   def pay_to(friend:, amount:, description: '')
     raise 'Needs to be friends' unless my_friend?(friend)
 
-    payments.create!(receiver: friend, amount: amount, description: description)
+    payment = payments.new(receiver: friend, amount: amount, description: description)
+
+    return unless payment.save
+
+    friend.add_funds(amount)
+    subtract_funds(amount)
+
+    # TODO: Credit
+    add_funds(-self.amount) if red_balance?
   end
 
-  def my_friend?(friend)
-    friends.find_by(id: friend.id).present?
+  def add_funds(value)
+    self.amount += value
+    save!
+  end
+
+  def subtract_funds(value)
+    self.amount -= value
+    save!
+  end
+
+  def red_balance?
+    amount.negative?
   end
 end
