@@ -26,4 +26,27 @@ describe Payment, type: :model do
     it { is_expected.to validate_presence_of(:amount) }
     it { is_expected.to validate_numericality_of(:amount).is_greater_than(0).is_less_than(1_000) }
   end
+
+  describe '#transaction_summary' do
+    let(:user_a) { create :user, amount: 500.0 }
+    let(:user_b) { create :user }
+    let(:description) { Faker::Lorem.sentence }
+
+    before do
+      user_a.add_friend(user_b)
+      FundTransferService.new(user_a, user_b, 500.0, description).pay
+    end
+
+    let(:message) do
+      "#{user_a.username} paid #{user_b.username} on #{user_a.payments.first.created_at} - "\
+        "#{user_a.payments.first.description}"
+    end
+
+    it 'user_a shows transaction summary' do
+      expect(user_a.payments.first.transaction_summary).to eq(message)
+    end
+    it 'user_b shows transaction summary' do
+      expect(user_b.incoming_payments.first.transaction_summary).to eq(message)
+    end
+  end
 end

@@ -3,6 +3,8 @@
 # Table name: users
 #
 #  id         :bigint           not null, primary key
+#  email      :string           not null
+#  username   :string           default(""), not null
 #  amount     :float            default(0.0)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -13,6 +15,10 @@ class User < ApplicationRecord
   has_many :payments, foreign_key: :sender_id, inverse_of: :sender, dependent: :nullify
   has_many :incoming_payments, foreign_key: :receiver_id, class_name: 'Payment',
                                inverse_of: :receiver, dependent: :nullify
+
+  validates :email, presence: true, uniqueness: { case_sensitive: false },
+                    format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :username, presence: true
 
   def add_friend(user)
     friendships.create!(user_b: user)

@@ -3,6 +3,8 @@
 # Table name: users
 #
 #  id         :bigint           not null, primary key
+#  email      :string           not null
+#  username   :string           default(""), not null
 #  amount     :float            default(0.0)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -24,6 +26,24 @@ describe User, type: :model do
     it 'has many incoming_payments' do
       u = User.reflect_on_association(:incoming_payments)
       expect(u.macro).to eq(:has_many)
+    end
+  end
+
+  describe 'validations' do
+    subject(:user) { create :user }
+    it { is_expected.to validate_presence_of(:email) }
+    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
+    it { is_expected.to validate_presence_of(:username) }
+  end
+
+  describe 'when validates email' do
+    subject(:user) { create :user }
+    it 'valid' do
+      expect(subject).to be_valid
+    end
+    it 'invalid' do
+      subject.email = 'invalid_email'
+      expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /Email is invalid/)
     end
   end
 
