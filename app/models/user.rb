@@ -23,31 +23,28 @@ class User < ApplicationRecord
     friends.find_by(id: friend.id).present?
   end
 
-  def pay_to(friend:, amount:, description: '')
-    raise 'Needs to be friends' unless my_friend?(friend)
-
-    payment = payments.new(receiver: friend, amount: amount, description: description)
-
-    return unless payment.save
-
-    friend.add_funds(amount)
-    subtract_funds(amount)
-
-    # TODO: Credit
-    add_funds(-self.amount) if red_balance?
-  end
-
   def add_funds(value)
+    raise Api::NonePositiveAmountError if value <= 0
+
     self.amount += value
     save!
   end
 
+  alias add_to_balance add_funds
+
   def subtract_funds(value)
+    raise Api::NonePositiveAmountError if value <= 0
+
     self.amount -= value
     save!
+    value
   end
 
-  def red_balance?
-    amount.negative?
+  def funds_required(value)
+    amount - value
+  end
+
+  def can_send?(value)
+    funds_required(value) >= 0
   end
 end

@@ -56,15 +56,57 @@ describe User, type: :model do
     end
   end
 
-  describe '#pay_to' do
-    let(:user_a) { create :user }
-    let(:user_b) { create :user }
-    let(:amount) { Faker::Number.within(range: 1..1_000).to_f }
+  describe '#add_funds' do
+    subject(:user) { create :user }
+    let(:valid_amount) { Faker::Number.within(range: 1..1000).to_f }
+    let(:invalid_amount) { Faker::Number.within(range: -10..0).to_f }
 
-    context 'successful payment' do
-      before { user_a.add_friend(user_b) }
-      it 'Save record' do
-        expect { user_a.pay_to(friend: user_b, amount: amount) }.to change { Payment.count }.by(1)
+    it 'charge funds' do
+      expect { user.add_funds(valid_amount) }.to change { user.amount }.by(valid_amount)
+    end
+    it 'raise error due to negative amount' do
+      expect { user.add_funds(invalid_amount) }.to raise_error(Api::NonePositiveAmountError)
+    end
+    it 'raise error when amount is zero' do
+      expect { user.add_funds(0.0) }.to raise_error(Api::NonePositiveAmountError)
+    end
+  end
+
+  describe '#subtract_funds' do
+    subject(:user) { create :user }
+    let(:valid_amount) { Faker::Number.within(range: 1..1000).to_f }
+    let(:invalid_amount) { Faker::Number.within(range: -10..0).to_f }
+
+    it 'charge funds' do
+      expect { user.subtract_funds(valid_amount) }.to change { user.amount }.by(-valid_amount)
+    end
+    it 'raise error due to negative amount' do
+      expect { user.subtract_funds(invalid_amount) }.to raise_error(Api::NonePositiveAmountError)
+    end
+    it 'raise error when amount is zero' do
+      expect { user.subtract_funds(0.0) }.to raise_error(Api::NonePositiveAmountError)
+    end
+  end
+
+  context 'when user requiers a credit' do
+    let(:amount) { Faker::Number.within(range: 500..1000).to_f }
+    let(:funds) { Faker::Number.within(range: 1000..1500).to_f }
+    subject(:user) { create(:user, amount: amount) }
+
+    describe '#funds_required' do
+      it 'returns difference between amount and funds' do
+        expect(user.funds_required(funds)).to eq(amount - funds)
+      end
+    end
+
+    describe '#can_send?' do
+      let(:minor_funds) { Faker::Number.within(range: 100..500).to_f }
+
+      it 'can send' do
+        expect(user.can_send?(minor_funds)).to be(true)
+      end
+      it 'can not send' do
+        expect(user.can_send?(funds)).to be(false)
       end
     end
   end
