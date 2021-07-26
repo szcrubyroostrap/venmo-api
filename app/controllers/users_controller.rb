@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   end
 
   def feed
-    pagy, my_feed = pagy_array(@user.my_feed, { page: feed_params[:page] })
+    _pagy, my_feed = pagy_array(@user.my_feed, { page: feed_params[:page] })
     render json: { feed: my_feed }, status: :ok
   end
 

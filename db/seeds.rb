@@ -6,3 +6,8 @@ user_d = User.create!(amount: 1700, email: 'user_d@email.com', username: 'user_d
 user_a.add_friend(user_b)
 user_b.add_friend(user_c)
 user_c.add_friend(user_d)
+
+FundTransferService.new(user_a, user_b, 100.0, 'good boy').pay
+FundTransferService.new(user_b, user_a, 500.0, 'for cats').pay
+FundTransferService.new(user_b, user_c, 300.0, 'gaming stuff').pay
+FundTransferService.new(user_c, user_d, 900.0, 'car service').pay
