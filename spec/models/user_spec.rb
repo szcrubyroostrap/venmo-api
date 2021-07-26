@@ -27,6 +27,14 @@ describe User, type: :model do
       u = User.reflect_on_association(:incoming_payments)
       expect(u.macro).to eq(:has_many)
     end
+    it 'has many friends_payments' do
+      u = User.reflect_on_association(:friends_payments)
+      expect(u.macro).to eq(:has_many)
+    end
+    it 'has many friends_incoming_payments' do
+      u = User.reflect_on_association(:friends_incoming_payments)
+      expect(u.macro).to eq(:has_many)
+    end
   end
 
   describe 'validations' do
@@ -44,6 +52,57 @@ describe User, type: :model do
     it 'invalid' do
       subject.email = 'invalid_email'
       expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /Email is invalid/)
+    end
+  end
+
+  describe 'loads a feed' do
+    let(:user_a) { create :user, amount: 500.0 }
+    let(:user_b) { create :user }
+    let(:description) { Faker::Lorem.sentence }
+
+    before { user_a.add_friend(user_b) }
+
+    context '#all_my_payments' do
+      context 'user_a does not have transactions' do
+        it 'payments and incoming_payments' do
+          expect(user_a.payments.size).to eq(0)
+          expect(user_a.incoming_payments.size).to eq(0)
+          expect(user_a.all_my_payments.size).to eq(0)
+        end
+      end
+
+      context 'user_a has' do
+        before { FundTransferService.new(user_a, user_b, 500.0, description).pay }
+
+        it 'one payment to user_b' do
+          expect(user_a.all_my_payments.size).to eq(1)
+        end
+        it 'one incoming_payments from user_b' do
+          expect(user_a.all_my_payments.size).to eq(1)
+        end
+        it 'one payment and one incoming_payments from user_b' do
+          FundTransferService.new(user_b, user_a, 500.0, description).pay
+          expect(user_a.all_my_payments.size).to eq(2)
+        end
+      end
+    end
+
+    context '#my_feed' do
+      let(:user_c) { create :user }
+      let(:user_d) { create :user }
+      before do
+        user_b.add_friend(user_c)
+        user_c.add_friend(user_d)
+        FundTransferService.new(user_a, user_b, 500.0, description).pay
+        FundTransferService.new(user_b, user_a, 100.0, description).pay
+        FundTransferService.new(user_b, user_c, 400.0, description).pay
+      end
+      it 'it return my feed and my friends feed' do
+        expect(user_a.my_feed.size).to eq(3)
+        expect(user_b.my_feed.size).to eq(3)
+        expect(user_c.my_feed.size).to eq(3)
+        expect(user_d.my_feed.size).to eq(1)
+      end
     end
   end
 

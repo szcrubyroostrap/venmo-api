@@ -11,14 +11,25 @@
 #
 class User < ApplicationRecord
   has_many :friendships, foreign_key: :user_a_id, inverse_of: :user_a, dependent: :destroy
-  has_many :friends, through: :friendships, class_name: 'User', source: :user_b
+  has_many :friends, through: :friendships, source: :user_b
   has_many :payments, foreign_key: :sender_id, inverse_of: :sender, dependent: :nullify
   has_many :incoming_payments, foreign_key: :receiver_id, class_name: 'Payment',
                                inverse_of: :receiver, dependent: :nullify
+  has_many :friends_payments, through: :friends, source: :payments
+  has_many :friends_incoming_payments, through: :friends, source: :incoming_payments
 
   validates :email, presence: true, uniqueness: { case_sensitive: false },
                     format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :username, presence: true
+
+  def all_my_payments
+    payments.or(incoming_payments)
+  end
+
+  def my_feed
+    payments_ids = all_my_payments.ids + friends_payments.ids + friends_incoming_payments.ids
+    Payment.feed_load(payments_ids).map(&:transaction_summary)
+  end
 
   def add_friend(user)
     friendships.create!(user_b: user)

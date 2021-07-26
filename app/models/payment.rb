@@ -18,6 +18,7 @@ class Payment < ApplicationRecord
   validates :amount, numericality: { greater_than: 0, less_than: 1000 }
 
   scope :desc, -> { order(created_at: :desc) }
+  scope :feed_load, ->(ids) { where(id: ids).includes(:sender, :receiver).desc }
 
   def transaction_summary
     "#{sender.username} paid #{receiver.username} on #{created_at} - #{description}"
