@@ -22,14 +22,12 @@ class Friendship < ApplicationRecord
     return if user_a != user_b
 
     errors.add(:base, 'Same user can not be a friend.')
-    throw(:abort)
   end
 
   def friendship_existing_friend
     return if Friendship.where(user_a: user_a, user_b: user_b).empty?
 
     errors.add(:base, 'Friendship already exists.')
-    throw(:abort)
   end
 
   # Destroy if user is removed

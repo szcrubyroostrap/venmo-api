@@ -45,6 +45,7 @@ class User < ApplicationRecord
 
     self.amount += value
     save!
+    value
   end
 
   alias add_to_balance add_funds

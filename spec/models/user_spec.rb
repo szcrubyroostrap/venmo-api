@@ -143,6 +143,9 @@ describe User, type: :model do
     it 'charge funds' do
       expect { user.add_funds(valid_amount) }.to change { user.amount }.by(valid_amount)
     end
+    it 'returns amount to add' do
+      expect(user.add_funds(valid_amount)).to eq(valid_amount)
+    end
     it 'raise error due to negative amount' do
       expect { user.add_funds(invalid_amount) }.to raise_error(Api::NonePositiveAmountError)
     end
@@ -158,6 +161,9 @@ describe User, type: :model do
 
     it 'charge funds' do
       expect { user.subtract_funds(valid_amount) }.to change { user.amount }.by(-valid_amount)
+    end
+    it 'returns funds to subtract' do
+      expect(user.subtract_funds(valid_amount)).to eq(valid_amount)
     end
     it 'raise error due to negative amount' do
       expect { user.subtract_funds(invalid_amount) }.to raise_error(Api::NonePositiveAmountError)
