@@ -76,6 +76,9 @@ This endpoint returns the current amount of the user.
     "balance": 100.0
 }
 ```
+## Entity–Relationship Model
+The following graphic represents the models involved in the business logic built for the APIs described above.
+![Entity–Relationship Model](https://github.com/szcrubyroostrap/venmo-api/blob/development/public/Api-ER.png?raw=true)
 
 ## Setup instructions
 
@@ -99,7 +102,7 @@ This project was developed with the following technologies:
 3.  run  `bundle exec rails db:seeds`
 
 ### Unit Testing
-You have to run the following command in a terminal: `bundle exec rspec`
+You have to run the following command in a terminal: `bundle exec rspe`
 
 ### Code Formatter
 To improve the quality of the source code, the following gems have been added to the project.
