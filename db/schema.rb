@@ -10,9 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2021_07_23_155456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "friendships", force: :cascade do |t|
+    t.integer "user_a_id"
+    t.integer "user_b_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_a_id"], name: "index_friendships_on_user_a_id"
+    t.index ["user_b_id"], name: "index_friendships_on_user_b_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.float "amount", default: 0.0
+    t.string "description", default: "", null: false
+    t.integer "sender_id"
+    t.integer "receiver_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["receiver_id"], name: "index_payments_on_receiver_id"
+    t.index ["sender_id"], name: "index_payments_on_sender_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "username", default: "", null: false
+    t.float "amount", default: 0.0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+  end
 
 end
