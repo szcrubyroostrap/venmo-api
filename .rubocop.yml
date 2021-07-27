@@ -10,5 +10,4 @@ AllCops:
   Exclude:
     - db/schema.rb
     - bin/bundle
-    - config/initializers/pagy.rb
   NewCops: enable
