@@ -104,6 +104,9 @@ This project was developed with the following technologies:
 ### Unit Testing
 You have to run the following command in a terminal: `bundle exec rspec`
 
+### Manual Testing
+In the `/ public` folder there is the` venmo-api.postman_collection.json` file with a set of tests performed from Postman to the endpoints described in the API.
+
 ### Code Formatter
 To improve the quality of the source code, the following gems have been added to the project.
 1.  `Annotate`  (Adds comments to the models and factories taking into account the current database schema)
