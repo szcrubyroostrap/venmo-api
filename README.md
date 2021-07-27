@@ -102,7 +102,7 @@ This project was developed with the following technologies:
 3.  run  `bundle exec rails db:seeds`
 
 ### Unit Testing
-You have to run the following command in a terminal: `bundle exec rspe`
+You have to run the following command in a terminal: `bundle exec rspec`
 
 ### Code Formatter
 To improve the quality of the source code, the following gems have been added to the project.
