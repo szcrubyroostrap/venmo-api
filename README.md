@@ -44,9 +44,9 @@ This feed is calculated using the relationships that exist between friends and f
 
 This means that the endpoint must list the following payment summaries:
 
-1- The payments sent by the `user_a` to his friends and the receipt of the payments made by his friends.
-1- The payments sent and that were received to the friends of the `user_a`. (For this case the `user_b`).
-1- The payments sent and that were received to the friends of the friends of the `user_a`. These would be the payments of the friends of `user_b`.
+1. The payments sent by the `user_a` to his friends and the receipt of the payments made by his friends.
+1. The payments sent and that were received to the friends of the `user_a`. (For this case the `user_b`).
+1. The payments sent and that were received to the friends of the friends of the `user_a`. These would be the payments of the friends of `user_b`.
 
 The `pages` parameter helps to filter the page number to be listed in the payment query result (10 per page). This is with the help of the [Pagy](https://github.com/ddnexus/pagy) gem that has been added to the project.
 
